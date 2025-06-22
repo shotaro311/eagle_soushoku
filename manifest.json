@@ -1,0 +1,15 @@
+{
+    "id": "92425dad-4aff-47e3-b42d-7e197a7893da",
+    "version": "1.0.0",
+    "platform": "all",
+    "arch": "all",
+    "name": "装飾ツール",
+    "logo": "/logo.png",
+    "keywords": ["装飾", "ペン", "モザイク", "画像編集"],
+    "devTools": true,
+    "main": {
+        "url": "index.html",
+        "width": 900,
+        "height": 700
+    }
+}

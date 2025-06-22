@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>装飾ツール</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .toolbar {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tool-button, .color-button, .size-button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+
+        .tool-button:hover, .color-button:hover, .size-button:hover {
+            background: #f0f0f0;
+            border-color: #007AFF;
+        }
+
+        .tool-button.active, .color-button.active, .size-button.active {
+            background: #007AFF;
+            color: white;
+            border-color: #007AFF;
+        }
+
+        .color-button {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border-radius: 50%;
+        }
+
+        .color-button[data-color="red"] { background-color: red; }
+        .color-button[data-color="blue"] { background-color: blue; }
+        .color-button[data-color="green"] { background-color: green; }
+        .color-button[data-color="yellow"] { background-color: yellow; }
+        .color-button[data-color="black"] { background-color: black; }
+        .color-button[data-color="white"] { background-color: white; border: 2px solid #ddd; }
+
+        .separator {
+            width: 1px;
+            height: 30px;
+            background: #ddd;
+            margin: 0 5px;
+        }
+
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        #drawingCanvas {
+            border: 2px solid #007AFF;
+            border-radius: 4px;
+            cursor: crosshair;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .bottom-toolbar {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .action-button {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .action-button:hover {
+            background: #f0f0f0;
+            border-color: #007AFF;
+        }
+
+        .action-button.primary {
+            background: #007AFF;
+            color: white;
+            border-color: #007AFF;
+        }
+
+        .action-button.primary:hover {
+            background: #0056CC;
+        }
+
+        .action-button.danger {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        .action-button.danger:hover {
+            background: #e55555;
+        }
+
+        #message {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            color: #007AFF;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- メッセージ表示エリア -->
+    <div id="message" class="loading">
+        Eagleプラグインを初期化中...
+    </div>
+
+    <!-- 上部ツールバー -->
+    <div class="toolbar">
+        <!-- ツール選択 -->
+        <div class="tool-group">
+            <button id="penTool" class="tool-button active">✏️ ペン</button>
+            <button id="mosaicTool" class="tool-button">🔲 モザイク</button>
+            <button id="eraserTool" class="tool-button">🧽 消しゴム</button>
+        </div>
+
+        <div class="separator"></div>
+
+        <!-- 色選択 -->
+        <div class="tool-group">
+            <span style="font-size: 12px; color: #666;">色:</span>
+            <button class="color-button active" data-color="red"></button>
+            <button class="color-button" data-color="blue"></button>
+            <button class="color-button" data-color="green"></button>
+            <button class="color-button" data-color="yellow"></button>
+            <button class="color-button" data-color="black"></button>
+            <button class="color-button" data-color="white"></button>
+        </div>
+
+        <div class="separator"></div>
+
+        <!-- サイズ選択 -->
+        <div class="tool-group">
+            <span style="font-size: 12px; color: #666;">太さ:</span>
+            <button class="size-button active" data-size="1">細</button>
+            <button class="size-button" data-size="3">中</button>
+            <button class="size-button" data-size="5">太</button>
+            <button class="size-button" data-size="10">極太</button>
+            <button class="size-button" data-size="30">超極太</button>
+        </div>
+    </div>
+
+    <!-- キャンバス領域 -->
+    <div class="canvas-container">
+        <canvas id="drawingCanvas" width="800" height="600"></canvas>
+    </div>
+
+    <!-- 下部ツールバー -->
+    <div class="bottom-toolbar">
+        <button id="undoBtn" class="action-button">↶ 取り消し (Ctrl+Z)</button>
+        <button id="redoBtn" class="action-button">↷ 進む (Ctrl+Y)</button>
+        <button id="clearBtn" class="action-button danger">🗑️ クリア</button>
+        <button id="saveBtn" class="action-button primary">💾 保存</button>
+    </div>
+
+    <script src="js/plugin.js"></script>
+</body>
+</html>
