@@ -179,13 +179,13 @@
         <div class="tool-group">
             <button id="penTool" class="tool-button active">✏️ ペン</button>
             <button id="mosaicTool" class="tool-button">🔲 モザイク</button>
-            <button id="eraserTool" class="tool-button">🧽 消しゴム</button>
+            <button id="handTool" class="tool-button">✋ ハンド</button>
         </div>
 
         <div class="separator"></div>
 
         <!-- 色選択 -->
-        <div class="tool-group">
+        <div id="colorGroup" class="tool-group">
             <span style="font-size: 12px; color: #666;">色:</span>
             <button class="color-button active" data-color="red"></button>
             <button class="color-button" data-color="blue"></button>
@@ -195,16 +195,27 @@
             <button class="color-button" data-color="white"></button>
         </div>
 
-        <div class="separator"></div>
+        <div id="sizeSeparator" class="separator"></div>
 
         <!-- サイズ選択 -->
-        <div class="tool-group">
+        <div id="sizeGroup" class="tool-group">
             <span style="font-size: 12px; color: #666;">太さ:</span>
             <button class="size-button active" data-size="1">細</button>
             <button class="size-button" data-size="3">中</button>
             <button class="size-button" data-size="5">太</button>
             <button class="size-button" data-size="10">極太</button>
             <button class="size-button" data-size="30">超極太</button>
+        </div>
+
+        <div id="mosaicSeparator" class="separator" style="display: none;"></div>
+
+        <!-- モザイクの荒さ選択 -->
+        <div id="mosaicLevelGroup" class="tool-group" style="display: none;">
+            <span style="font-size: 12px; color: #666;">荒さ:</span>
+            <button class="mosaic-level-button size-button" data-level="50">最粗</button>
+            <button class="mosaic-level-button size-button" data-level="30">粗</button>
+            <button class="mosaic-level-button size-button active" data-level="20">中</button>
+            <button class="mosaic-level-button size-button" data-level="10">細</button>
         </div>
     </div>
 

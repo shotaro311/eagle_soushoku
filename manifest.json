@@ -4,9 +4,9 @@
     "platform": "all",
     "arch": "all",
     "name": "装飾ツール",
-    "logo": "/logo.png",
+    "logo": "logo.png",
     "keywords": ["装飾", "ペン", "モザイク", "画像編集"],
-    "devTools": true,
+    "devTools": false,
     "main": {
         "url": "index.html",
         "width": 900,
