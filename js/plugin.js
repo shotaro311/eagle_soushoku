@@ -7,7 +7,7 @@ class DecorationTool {
 		this.isDrawing = false;
 		this.currentTool = 'pen';
 		this.currentColor = 'red';
-		this.currentSize = 1;
+		this.currentSize = 3;
 		this.currentMosaicLevel = 20; // モザイクの荒さ (最粗:50, 粗:30, 中:20, 細:10)
 		this.lastX = 0;
 		this.lastY = 0;
@@ -50,7 +50,10 @@ class DecorationTool {
 		this.ctx.lineCap = 'round';
 		this.ctx.lineJoin = 'round';
 		this.ctx.strokeStyle = this.currentColor;
+		this.ctx.fillStyle = this.currentColor;
 		this.ctx.lineWidth = this.currentSize;
+		this.ctx.imageSmoothingEnabled = true;
+		this.ctx.imageSmoothingQuality = 'high';
 		
 		// イベントリスナー設定
 		this.setupEventListeners();
@@ -389,6 +392,7 @@ class DecorationTool {
 	setColor(color) {
 		this.currentColor = color;
 		this.ctx.strokeStyle = color;
+		this.ctx.fillStyle = color;
 		
 		// ボタンのアクティブ状態更新
 		document.querySelectorAll('.color-button').forEach(btn => btn.classList.remove('active'));
@@ -458,8 +462,8 @@ class DecorationTool {
 			return;
 		}
 		
-		// ペンツール用の座標変換
-		const pos = this.getMousePos(e);
+		// ペンツールも実際のキャンバス座標を使用
+		const pos = this.getRealCanvasPos(e);
 		this.isDrawing = true;
 		this.lastX = pos.x;
 		this.lastY = pos.y;
@@ -467,7 +471,13 @@ class DecorationTool {
 		// 描画設定
 		this.ctx.globalCompositeOperation = 'source-over';
 		this.ctx.strokeStyle = this.currentColor;
+		this.ctx.fillStyle = this.currentColor;
 		this.ctx.lineWidth = this.currentSize;
+		
+		// 開始点に円を描画
+		this.ctx.beginPath();
+		this.ctx.arc(pos.x, pos.y, this.currentSize / 2, 0, Math.PI * 2);
+		this.ctx.fill();
 	}
 
 	draw(e) {
@@ -493,12 +503,37 @@ class DecorationTool {
 			return;
 		}
 		
-		// ペンツール用の座標変換
-		const pos = this.getMousePos(e);
-		this.ctx.beginPath();
-		this.ctx.moveTo(this.lastX, this.lastY);
-		this.ctx.lineTo(pos.x, pos.y);
-		this.ctx.stroke();
+		// ペンツールも実際のキャンバス座標を使用
+		const pos = this.getRealCanvasPos(e);
+		
+		// 移動距離を計算
+		const distance = Math.sqrt(Math.pow(pos.x - this.lastX, 2) + Math.pow(pos.y - this.lastY, 2));
+		
+		// 距離が短い場合は単純な線を描画
+		if (distance < 2) {
+			// 点を描画
+			this.ctx.beginPath();
+			this.ctx.arc(pos.x, pos.y, this.currentSize / 2, 0, Math.PI * 2);
+			this.ctx.fill();
+		} else {
+			// 補間点を使用して滑らかな線を描画
+			const steps = Math.max(Math.floor(distance / 2), 1);
+			
+			for (let i = 0; i < steps; i++) {
+				const t = i / steps;
+				const x = this.lastX + (pos.x - this.lastX) * t;
+				const y = this.lastY + (pos.y - this.lastY) * t;
+				
+				this.ctx.beginPath();
+				this.ctx.arc(x, y, this.currentSize / 2, 0, Math.PI * 2);
+				this.ctx.fill();
+			}
+			
+			// 最終点も描画
+			this.ctx.beginPath();
+			this.ctx.arc(pos.x, pos.y, this.currentSize / 2, 0, Math.PI * 2);
+			this.ctx.fill();
+		}
 		
 		this.lastX = pos.x;
 		this.lastY = pos.y;
